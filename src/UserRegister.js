@@ -4,7 +4,7 @@ import { FaArrowLeft, FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 
-export default function UserRegister() {
+export default function   UserRegister() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
@@ -43,7 +43,8 @@ export default function UserRegister() {
         <h1 className="text-red-600 text-xl font-bold">
           Системд нэвтрэх бүртгүүлэх
         </h1>
-        <button className="bg-blue-800 text-white px-4 py-2 rounded-md flex items-center gap-2 text-sm">
+        <button className="bg-blue-800 text-white px-4 py-2 rounded-md flex items-center gap-2 text-sm"
+        onClick={() => navigate("/login")}>
           <FaUserCircle /> Нэвтрэх
         </button>
       </div>
@@ -51,9 +52,12 @@ export default function UserRegister() {
       {/* Form Content */}
       <div className="flex items-center justify-center mt-10">
         <div className="w-full max-w-sm text-center">
-          <button className="flex items-center gap-1 text-sm mb-6 text-gray-700">
-            <FaArrowLeft /> Буцах
-          </button>
+        <button
+          className="flex items-center gap-1 text-sm mb-6 text-gray-700"
+          onClick={() => navigate(-1)}
+        >
+          <FaArrowLeft /> Буцах
+        </button>
 
           <div className="text-center mb-4">
             <FaUserCircle className="mx-auto text-3xl text-blue-500" />
@@ -109,7 +113,7 @@ export default function UserRegister() {
                   : "bg-white border-gray-300"
               }`}
             >
-              admin аар
+              Админаар
             </button>
             <button
               onClick={() => setRole("user")}

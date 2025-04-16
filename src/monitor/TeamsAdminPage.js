@@ -115,7 +115,8 @@ export default function TeamsAdminPage() {
 
         {/* Bottom Logout */}
         <div className="mt-auto pt-6">
-          <button className="bg-blue-800 text-white w-full py-2 rounded">👤 Гарах</button>
+          <button className="bg-blue-800 text-white w-full py-2 rounded" onClick={() => navigate("/login")}>👤 Гарах</button>
+
         </div>
       </aside>
 

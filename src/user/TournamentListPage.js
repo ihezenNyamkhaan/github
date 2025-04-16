@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft, FaUserCircle } from "react-icons/fa";
 
 
 export default function TournamentListPage() {
@@ -31,7 +32,7 @@ export default function TournamentListPage() {
         </div>
         <nav className="flex gap-6 text-sm font-medium text-gray-700">
         <button onClick={() => navigate("/")} className="text-blue-600">Тэмцээн</button>
-        <button onClick={() => alert("Coming soon")}>Холбоо барих</button>
+        <button onClick={() => navigate("/information")}>Холбоо барих</button>
         <button
           onClick={() => {
             const savedId = localStorage.getItem("tournamentId");
@@ -44,10 +45,13 @@ export default function TournamentListPage() {
         >
           Баг бүртгэх
         </button>
-        <button onClick={() => navigate("/profile")}>Профайл</button>
+        <button onClick={() => navigate("/userprofile")}>Профайл</button>
         </nav>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded">Нэвтрэх</button>
-      </header>
+        <button className="bg-blue-800 text-white px-4 py-2 rounded-md flex items-center gap-2 text-sm"
+        onClick={() => navigate("/login")}>
+          <FaUserCircle /> Нэвтрэх
+        </button>      
+                </header>
 
       {/* Top Image */}
       <div className="w-full max-w-5xl mx-auto mt-6">

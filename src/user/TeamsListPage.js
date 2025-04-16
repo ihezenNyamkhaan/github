@@ -33,7 +33,7 @@ export default function TeamsListPage() {
         </div>
         <nav className="flex gap-6 text-sm font-medium text-gray-700">
           <a href="#" className="text-blue-600">Тэмцээн</a>
-          <a href="#">Холбоо барих</a>
+          <a href="information">Холбоо барих</a>
           <a href="#">Баг бүртгэх</a>
           <a href="#">Профайл</a>
         </nav>

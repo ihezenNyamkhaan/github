@@ -33,9 +33,10 @@ export default function ForgotPassword() {
         <h1 className="text-red-600 text-xl font-bold">
           Системд нэвтрэх бүртгүүлэх
         </h1>
-        <button className="bg-blue-800 text-white px-4 py-2 rounded-md flex items-center gap-2 text-sm">
-          <FaUserCircle /> Нэвтрэх
-        </button>
+        <button className="bg-blue-800 text-white px-4 py-2 rounded-md flex items-center gap-2 text-sm"
+                onClick={() => navigate("/login")}>
+                  <FaUserCircle /> Нэвтрэх
+                </button>
       </div>
 
       {/* Form */}

@@ -20,24 +20,33 @@ export default function Login() {
         accountNumber: ""
       });
   
+      // Log the response to check if the role is being correctly returned
+      console.log(res.data);
+    
       const { id, role } = res.data;
-  
+    
+      // Ensure localStorage stores the right values
       localStorage.setItem("userId", id);
       localStorage.setItem("userRole", role); // store role if needed
-  
+    
       setMessage("Амжилттай нэвтэрлээ");
-  
-      if (role === "ADMIN") {
-        navigate("/monitor"); // ✅ redirect to TournamentManager
+    
+      // Check the role and navigate accordingly
+      if (role === "MONITORING") {
+        navigate("/monitor"); // Redirect to monitor page if role is MONITORING
+      } else if (role === "USER") {
+        navigate("/tournament"); // Redirect to tournament if role is USER
+      } else if (role === "ADMIN") {
+        navigate("/admin"); // Redirect to admin page if role is ADMIN
       } else {
-        // handle redirect for other roles like "USER"
-        navigate("/"); // or /home or wherever your default user page is
+        navigate("/"); // Default redirect
       }
     } catch (error) {
       console.error(error);
       setMessage("Имэйл эсвэл нууц үг буруу байна");
     }
   };
+  
   
 
   return (

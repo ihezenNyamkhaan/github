@@ -1,10 +1,13 @@
 // ✅ Full Updated TeamDashboardPage.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 
 export default function TeamDashboardPage() {
   const { tournamentId } = useParams();
+  const navigate = useNavigate();
+
   const numericTournamentId = parseInt(tournamentId);
   const userId = parseInt(localStorage.getItem("userId"));
 
@@ -90,7 +93,11 @@ export default function TeamDashboardPage() {
         players: playersWithPhotos,
       };
   
+      const response = await axios.post("http://localhost:8080/teams/register", payload);
       await axios.post("http://localhost:8080/teams/register", payload);
+      const createdTeam = response.data;
+      setSubmittedTeam({ teamName, teamImage });
+      navigate(`/team-payment/${createdTeam.id}`);      
       setSubmittedTeam({ teamName, teamImage });
       setShowForm(false);
       fetchTeams();
@@ -114,33 +121,47 @@ export default function TeamDashboardPage() {
         `http://localhost:8080/teams/teams/tournament/${tournamentId}`
       );
       setTeams(res.data);
+      localStorage.setItem("teamsData", JSON.stringify(res.data)); // Store teams data in localStorage
     } catch (error) {
       console.error("Failed to fetch teams:", error);
     }
   };
 
   const handleTeamClick = async (team) => {
-    if (selectedTeamUserId === team.userId) {
-      // Clicking the same team again – hide the player list
-      setSelectedTeamUserId(null);
+    if (selectedTeamUserId === team.id)
+      {
+      // Clicking the same team again – hide the player list and reset state
+      setSelectedTeamUserId(team.id);
       setPlayers([]);
       return;
     }
   
+    // Update selected team state
     setSelectedTeamUserId(team.userId);
+  
+    // Fetch the players associated with the selected team
     try {
-      const res = await axios.get(
-        `http://localhost:8080/teams/user/${team.userId}/tournament/${team.tournamentId}/players`
-      );
-      setPlayers(res.data);
+      const res = await axios.get(`http://localhost:8080/teams/team/${team.id}`);
+      console.log("Players data:", res.data); // Debug log to check the response
+      setPlayers(res.data); // This is where you update the players state
     } catch (error) {
       console.error("Failed to load players:", error);
     }
   };
   
+  
 
   useEffect(() => {
+    
     fetchTeams();
+    const teamsData = localStorage.getItem("teamsData");
+    if (teamsData) {
+      setTeams(JSON.parse(teamsData)); // Use stored teams data
+    } else {
+      // If no stored data, fetch the teams
+      fetchTeams();
+    }
+
   }, [tournamentId]);
 
   return (
@@ -153,12 +174,15 @@ export default function TeamDashboardPage() {
         </div>
         <nav className="flex gap-6 text-sm font-medium text-gray-700">
           <a href="/tournament">Тэмцээн</a>
-          <a href="#">Холбоо барих</a>
+          <a href="/information">Холбоо барих</a>
           <a href="#" className="text-blue-600">Баг бүртгэх</a>
-          <a href="#">Профайл</a>
+          <a href="/userprofile">Профайл</a>
         </nav>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded">Нэвтрэх</button>
-      </header>
+        <button className="bg-blue-800 text-white px-4 py-2 rounded-md flex items-center gap-2 text-sm"
+        onClick={() => navigate("/login")}>
+          <FaUserCircle /> Нэвтрэх
+        </button>      
+        </header>
 
       <div className="flex mt-8">
         {/* Sidebar */}
@@ -167,7 +191,7 @@ export default function TeamDashboardPage() {
           Багийн бүртгэл
         </div>
         <a
-          href="#"
+          href="/team-qr"
           className={`font-semibold ${showForm ? "text-blue-700" : "text-black"}`}
         > 
           Миний тэмцээн
@@ -207,44 +231,46 @@ export default function TeamDashboardPage() {
 
           {/* Players table */}
           {selectedTeamUserId && players.length > 0 && (
-            <div className="mt-8 border rounded p-4">
-              <h3 className="font-bold text-xl mb-4">Тоглогчид</h3>
-              <table className="w-full border">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="p-2 border">Зураг</th>
-                    <th className="p-2 border">Овог Нэр</th>
-                    <th className="p-2 border">#</th>
-                    <th className="p-2 border">Өндөр</th>
-                    <th className="p-2 border">Цол</th>
-                    <th className="p-2 border">Үүрэг</th>
-                    <th className="p-2 border">Регистр</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {players.map((player, i) => (
-                    <tr key={i}>
-                      <td className="p-2 border">
-                        {player.playerPhoto && (
-                          <img
-                            src={player.playerPhoto}
-                            alt={player.name}
-                            className="h-10 w-10 object-cover rounded-full"
-                          />
-                        )}
-                      </td>
-                      <td className="p-2 border">{player.name}</td>
-                      <td className="p-2 border">{player.number}</td>
-                      <td className="p-2 border">{player.height}</td>
-                      <td className="p-2 border">{player.rank}</td>
-                      <td className="p-2 border">{player.role}</td>
-                      <td className="p-2 border">{player.regNumber}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+  <div className="mt-8 border rounded p-4">
+    <h3 className="font-bold text-xl mb-4">Тоглогчид</h3>
+    <table className="w-full border">
+      <thead>
+        <tr className="bg-gray-100">
+          <th className="p-2 border">Зураг</th>
+          <th className="p-2 border">Овог Нэр</th>
+          <th className="p-2 border">#</th>
+          <th className="p-2 border">Өндөр</th>
+          <th className="p-2 border">Цол</th>
+          <th className="p-2 border">Үүрэг</th>
+          <th className="p-2 border">Регистр</th>
+        </tr>
+      </thead>
+      <tbody>
+        {players.map((player, i) => (
+          <tr key={i}>
+            <td className="p-2 border">
+              {player.playerPhoto && (
+                <img
+                  src={player.playerPhoto}
+                  alt={player.name}
+                  className="h-10 w-10 object-cover rounded-full"
+                />
+              )}
+            </td>
+            <td className="p-2 border">{player.name}</td>
+            <td className="p-2 border">{player.number}</td>
+            <td className="p-2 border">{player.height}</td>
+            <td className="p-2 border">{player.rank}</td>
+            <td className="p-2 border">{player.role}</td>
+            <td className="p-2 border">{player.regNumber}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+
 
           {/* Register button */}
           <div className="border rounded p-4">
